@@ -1,48 +1,3 @@
-'''from groq import Groq
-import os
-from formatter import format_alert_report
-from dotenv import load_dotenv
-
-# Load .env variables
-load_dotenv()
-
-# Access the key
-api_key = os.getenv("GROQ_API_KEY")
-
-# Use with Groq client
-client = Groq(api_key=api_key)
-
-def classify_severity(text):
-    prompt = f"""
-Classify the severity of the following disaster report into one of: Low, Medium, or High.
-
-Report: "{text}"
-
-Severity:
-"""
-
-    response = client.chat.completions.create(
-        model="llama3-8b-8192",  # or mixtral, gemma, etc.
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0  # Deterministic output
-    )
-
-    return response.choices[0].message.content.strip()
-
-# Example usage
-#print(classify_severity("Floods have washed away several homes and roads are blocked."))
-llm_response = classify_severity("Floods have washed away several homes and roads are blocked.")
-first_line, *rest = llm_response.strip().split("\n", 1)
-severity = first_line.strip().split()[-1].replace(".", "")
-explanation = rest[0].strip() if rest else "No explanation provided."
-
-json_report = format_alert_report(
-    text="Floods have washed away several homes and roads are blocked.",
-    severity=severity,
-    explanation=explanation
-)
-
-print(json_report)'''
 from groq import Groq
 import os
 from dotenv import load_dotenv
@@ -50,17 +5,32 @@ from dotenv import load_dotenv
 load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-def classify_severity(text):
+def classify_severity_and_type(text):
     prompt = f"""
-Classify the severity of the following disaster report into one of: Low, Medium, or High.
-Also explain the reasoning.
+You are a disaster alert classification assistant.
+
+Classify the following disaster report into these fields **strictly**:
+
+1. Severity: Low, Medium, or High  
+2. Status: Choose only one of:
+   - ACTIVE: The disaster is currently happening or needs attention  
+   - RESOLVED: The disaster has been dealt with or recovery is underway  
+   - EXPIRED: The event is outdated or no longer relevant  
+   - IGNORED: The report is irrelevant, spam, or clearly false  
+3. Disaster Type: e.g., Flood, Earthquake, Fire, etc.  
+4. Explanation: Give detailed reasoning for each classification.
+
+**IMPORTANT: Follow this exact output format**  
 
 Report: "{text}"
 
-Return format:
-Severity: <Low|Medium|High>
+Return in this format:
+Severity: <Low|Medium|High>  
+Status: <ACTIVE|RESOLVED|EXPIRED|IGNORED>  
+Disaster Type: <Type>  
 Explanation: <reason>
 """
+
     response = client.chat.completions.create(
         model="llama3-8b-8192",
         messages=[{"role": "user", "content": prompt}],
@@ -69,13 +39,24 @@ Explanation: <reason>
 
     response_text = response.choices[0].message.content.strip()
 
-    # Parse the response
-    severity_line = next((line for line in response_text.splitlines() if line.startswith("Severity:")), "")
-    explanation_line = "\n".join([line for line in response_text.splitlines() if not line.startswith("Severity:")])
+    # Initialize variables
+    disaster_type = ""
+    severity = ""
+    status = ""
+    explanation_lines = []
 
-    severity = severity_line.replace("Severity:", "").strip()
-    explanation = explanation_line.replace("Explanation:", "").strip()
+    for line in response_text.splitlines():
+        if line.startswith("Severity:"):
+            severity = line.replace("Severity:", "").strip()
+        elif line.startswith("Status:"):
+            status = line.replace("Status:", "").strip()
+        elif line.startswith("Disaster Type:"):
+            disaster_type = line.replace("Disaster Type:", "").strip()
+        elif line.startswith("Explanation:"):
+            explanation_lines.append(line.replace("Explanation:", "").strip())
+        elif explanation_lines:
+            explanation_lines.append(line.strip())
 
-    return severity, explanation
+    explanation = "\n".join(explanation_lines)
 
-
+    return disaster_type, severity, status, explanation
