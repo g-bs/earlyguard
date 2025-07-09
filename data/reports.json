@@ -1,0 +1,12 @@
+[
+    {
+        "report_id": "69edf35f-b9f6-4f5c-a267-fe0373578526",
+        "username": "anjali",
+        "disaster_type": "Flood",
+        "location": "kuttanad",
+        "description": "hi",
+        "timestamp": "2025-07-09 23:06:03",
+        "photo_base64": null,
+        "status": "pending"
+    }
+]
