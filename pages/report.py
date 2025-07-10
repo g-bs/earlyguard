@@ -1,112 +1,156 @@
+# report.py
 import streamlit as st
 from datetime import datetime
 import base64
-import uuid
 import json
 from pathlib import Path
+import uuid
+from streamlit_js_eval import streamlit_js_eval
 import streamlit.components.v1 as components
+from blockchain import SimpleBlockchain
+
+# Load authorized API keys
+def load_authorized_users():
+    try:
+        with open("data/authorized_users.json", "r") as f:
+            return json.load(f)
+    except:
+        return {}
+
+AUTHORIZED_USERS = load_authorized_users()
+
+# Blockchain setup
+blockchain = SimpleBlockchain("data/blockchain.json")
 
 st.set_page_config(page_title="Report Incident", layout="centered")
 st.title("📤 Report a Disaster Incident")
 
-# -------------- Incident Form --------------
+# Unique user ID for the session
+if "user_id" not in st.session_state:
+    st.session_state.user_id = str(uuid.uuid4())
+
+# Geolocation (lat, long)
+coords = streamlit_js_eval(
+    js_expressions="""
+    new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude
+            }),
+            (err) => resolve({ error: err.message })
+        );
+    })
+    """,
+    key="get_location"
+)
+
+location_default = ""
+if coords and "latitude" in coords and "longitude" in coords:
+    location_default = f"{coords['latitude']:.5f}, {coords['longitude']:.5f}"
+elif coords and "error" in coords:
+    st.warning(f"⚠ Location Error: {coords['error']}")
+else:
+    st.info("📍 Waiting for location permission...")
+
+# ----------- Form -----------
 with st.form("incident_form"):
-    username = st.text_input("👤 Your Name", placeholder="Eg: Anjali")
-    disaster_type = st.selectbox("🔸 Type of Disaster", ["Flood", "Fire", "Landslide", "Other"])
-    location = st.text_input("📍 Location", placeholder="Eg: Kuttanad")
+    st.markdown(f"🆔 **User ID:** `{st.session_state.user_id}`")
+
+    api_key = st.text_input("🔐 API Key (if you're a verified authority)", type="password")
+    username = st.text_input("👤 Your Name", placeholder="Eg: NDMA")
+    disaster_type = st.selectbox("🌪 Type of Disaster", ["Flood", "Fire", "Landslide", "Other"])
+    location = st.text_input("📍 Location", value=location_default)
     description = st.text_area("📝 Description")
     photo = st.file_uploader("📷 Upload Photo", type=["jpg", "jpeg", "png"])
 
-    # 🎙️ Voice Recorder (inline)
-    st.markdown("🎙️ **Instant Voice Recorder** (No download, just record and listen)")
+    # Voice Recorder (only playback)
+    st.markdown("🎙️ **Instant Voice Recorder (Browser playback only)**")
+    components.html("""
+    <script>
+      let mediaRecorder;
+      let audioChunks = [];
 
-    voice_recorder_html = """
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <button id="record">🎤 Start Recording</button>
-        <button id="stop" disabled>⏹️ Stop</button>
-        <br><br>
-        <audio id="player" controls></audio>
+      document.addEventListener("DOMContentLoaded", function() {
+        const recordBtn = document.createElement("button");
+        recordBtn.innerText = "🎤 Start Recording";
+        document.body.appendChild(recordBtn);
 
-        <script>
-          let mediaRecorder;
-          let audioChunks = [];
+        const stopBtn = document.createElement("button");
+        stopBtn.innerText = "⏹️ Stop";
+        stopBtn.disabled = true;
+        document.body.appendChild(stopBtn);
 
-          document.getElementById("record").onclick = async () => {
-            audioChunks = [];
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
+        const player = document.createElement("audio");
+        player.controls = true;
+        document.body.appendChild(player);
 
-            mediaRecorder.ondataavailable = event => {
-              if (event.data.size > 0) audioChunks.push(event.data);
-            };
+        recordBtn.onclick = async () => {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
 
-            mediaRecorder.onstop = () => {
-              const blob = new Blob(audioChunks);
-              const url = URL.createObjectURL(blob);
-              const audio = document.getElementById("player");
-              audio.src = url;
-            };
-
-            mediaRecorder.start();
-            document.getElementById("record").disabled = true;
-            document.getElementById("stop").disabled = false;
+          mediaRecorder.ondataavailable = e => {
+            if (e.data.size > 0) audioChunks.push(e.data);
           };
 
-          document.getElementById("stop").onclick = () => {
-            mediaRecorder.stop();
-            document.getElementById("record").disabled = false;
-            document.getElementById("stop").disabled = true;
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(audioChunks);
+            player.src = URL.createObjectURL(blob);
           };
-        </script>
-      </body>
-    </html>
-    """
 
-    components.html(voice_recorder_html, height=300)
+          mediaRecorder.start();
+          recordBtn.disabled = true;
+          stopBtn.disabled = false;
+        };
+
+        stopBtn.onclick = () => {
+          mediaRecorder.stop();
+          recordBtn.disabled = false;
+          stopBtn.disabled = true;
+        };
+      });
+    </script>
+    """, height=300)
 
     submit = st.form_submit_button("📤 Submit Report")
 
-# -------------- Form Submission --------------
+# ----------- On Submit -----------
 if submit:
-    # Step 1: Generate metadata
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    report_id = str(uuid.uuid4())
-    photo_data = base64.b64encode(photo.read()).decode() if photo else None
+    verified = api_key in AUTHORIZED_USERS
+    submitted_by = AUTHORIZED_USERS.get(api_key, "Public User")
 
-    # Step 2: Create report object
-    report = {
-        "report_id": report_id,
+    photo_data = base64.b64encode(photo.read()).decode() if photo else None
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    report_data = {
+        "user_id": st.session_state.user_id,
         "username": username,
+        "submitted_by": submitted_by,
+        "verified": verified,
+        "api_key_used": api_key if verified else None,
         "disaster_type": disaster_type,
         "location": location,
         "description": description,
         "timestamp": timestamp,
         "photo_base64": photo_data,
-        "status": "pending"
-        # NOTE: Voice is not stored yet, only played in-browser
+        "status": "verified" if verified else "pending"
     }
 
-    # Step 3: Save to reports.json
-    report_file = Path("data/reports.json")
-    report_file.parent.mkdir(parents=True, exist_ok=True)
+    last_block = blockchain.get_last_block()
+    new_block = blockchain.create_block(report_data, last_block["hash"])
 
-    if report_file.exists() and report_file.stat().st_size > 0:
-        with open(report_file, "r") as f:
-            try:
-                reports = json.load(f)
-            except json.JSONDecodeError:
-                reports = []
+    st.success("✅ Report submitted to blockchain successfully!")
+    if verified:
+        st.info(f"🛡 Verified by: {submitted_by}")
     else:
-        reports = []
+        st.warning("📨 Submitted by Public User (Unverified)")
+    
+    st.write(f"🧾 Block Index: `{new_block['index']}`")
+    st.write(f"⛓️ Block Hash: `{new_block['hash'][:10]}...`")
+    st.write(f"🕒 Timestamp: `{new_block['timestamp']}`")
 
-    reports.append(report)
-
-    with open(report_file, "w") as f:
-        json.dump(reports, f, indent=4)
-
-    # Step 4: Confirmation
-    st.success(f"✅ Report submitted successfully! Your Report ID is `{report_id}`")
-    st.balloons()
-    st.json(report)
+# ----------- View Chain -----------
+if st.checkbox("📚 View Blockchain"):
+    for block in blockchain.get_chain():
+        st.json(block)

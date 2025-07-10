@@ -1,47 +1,44 @@
 import streamlit as st
 import json
-import base64
+from blockchain import SimpleBlockchain
 from pathlib import Path
 
-# ---------------------
-# Page Setup
-# ---------------------
-st.set_page_config(page_title="Community Feed", layout="wide")
-st.title("📋 Community Feed")
-st.markdown("Browse disaster incident reports submitted by community members.")
+# Load the blockchain
+blockchain = SimpleBlockchain("data/blockchain.json")
+chain = blockchain.get_chain()
 
-# ---------------------
-# Load Reports
-# ---------------------
-data_path = Path("data/reports.json")
+st.set_page_config(page_title="Community Feed", layout="centered")
+st.title("🌐 Community Disaster Reports")
 
-if not data_path.exists() or data_path.stat().st_size == 0:
-    st.warning("No community reports found yet.")
-else:
-    with open(data_path, "r") as f:
-        try:
-            reports = json.load(f)
-        except json.JSONDecodeError:
-            st.error("Error reading reports. Please check file format.")
-            reports = []
+# Initialize upvotes in session state
+if "upvotes" not in st.session_state:
+    st.session_state.upvotes = {}
 
-    # Reverse to show newest first
-    for report in reversed(reports):
+# Display each block (except Genesis)
+for block in reversed(chain[1:]):  # Skip genesis block
+    report = block["data"]
+    report_id = block["hash"][:10]  # Use hash prefix as ID
+
+    with st.container():
+        # Header
+        col1, col2 = st.columns([0.8, 0.2])
+        with col1:
+            st.subheader(f"{report['disaster_type']} at {report['location']}")
+        with col2:
+            if report.get("verified"):
+                st.markdown("🛡️ <span style='color:green'>**Verified**</span> ✔️", unsafe_allow_html=True)
+
+        st.markdown(f"👤 **Reported by**: {report.get('username', 'Unknown')}")
+        st.markdown(f"🕒 {report.get('timestamp')}")
+        st.markdown(f"📝 {report.get('description') or '_No description provided_'}")
+
+        if report.get("photo_base64"):
+            st.image(f"data:image/jpeg;base64,{report['photo_base64']}", caption="📷 Submitted Photo", use_column_width=True)
+
+        # If not verified, allow upvotes
+        if not report.get("verified"):
+            votes = st.session_state.upvotes.get(report_id, 0)
+            if st.button(f"👍 Upvote ({votes})", key=report_id):
+                st.session_state.upvotes[report_id] = votes + 1
+
         st.markdown("---")
-        with st.container():
-            col1, col2 = st.columns([4, 1])
-
-            with col1:
-                st.markdown(f"**🧍 {report['username']}**  reported a **{report['disaster_type']}**")
-                st.markdown(f"📍 **Location**: {report['location']}")
-                st.markdown(f"🕒 **Time**: {report['timestamp']}")
-                st.markdown(f"📝 **Description**: {report['description']}")
-                st.markdown(f"🆔 Report ID: `{report['report_id']}`")
-
-            with col2:
-                if report.get("photo_base64"):
-                    try:
-                        img_data = base64.b64decode(report["photo_base64"])
-                        st.image(img_data, caption="Attached Photo", use_column_width=True)
-                    except:
-                        st.error("📷 Image could not be displayed.")

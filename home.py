@@ -77,11 +77,9 @@ with col1:
         st.info("Navigate to the Report Incident page (TODO: Add routing logic or sidebar link).")
 
 
-with col2:
-    if st.button("🔊 Voice Alerts"):
-        st.info("Voice alert playback coming soon.")
 
-with col3:
+
+with col2:
     if st.button("📋 Community Feed"):
         st.info("Community activity feed under development.")
 
