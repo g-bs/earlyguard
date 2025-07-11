@@ -7,7 +7,10 @@ import os
 from math import radians, sin, cos, sqrt, atan2
 from datetime import datetime
 from user_register import router as user_router
-from whatsapp_utils import broadcast_alert_whatsapp
+from whatsapp_utils import broadcast_alert_whatsapp,notify_resolution_whatsapp
+from location_helper import parse_location, haversine
+
+
 
 
 app = FastAPI()
@@ -101,17 +104,12 @@ def submit_report(report: ReportInput):
     new_report["upvotes"] = 0
     new_report["downvotes"] = 0
     new_report["voters"] = {}
-    new_report["status_in_system"] = "pending"
 
-    if report.status == "RESOLVED":
-        report_lat, report_lon = parse_location(report.location)
-        for r in reports:
-            if r["disaster_type"].lower() == report.disaster_type.lower():
-                r_lat, r_lon = parse_location(r["location"])
-                if None not in (report_lat, report_lon, r_lat, r_lon):
-                    distance = haversine(report_lat, report_lon, r_lat, r_lon)
-                    if distance <= DEFAULT_RADIUS_KM and r["status_in_system"] in ["pending", "alert_triggered"]:
-                        r["status_in_system"] = "resolved_by_followup"
+    # ✅ Set initial system status
+    #if report.status == "RESOLVED":
+       # new_report["status_in_system"] = "resolved"
+    #else:
+    new_report["status_in_system"] = "pending"
 
     reports.append(new_report)
     save_reports(reports)
@@ -120,6 +118,7 @@ def submit_report(report: ReportInput):
         "msg": "Report submitted",
         "report_id": new_report["report_id"]
     }
+
 
 @app.post("/vote")
 def vote(vote: VoteInput):
@@ -139,20 +138,42 @@ def vote(vote: VoteInput):
                 else:
                     report["downvotes"] -= 1
 
+            # Update votes
             if vote.vote_type == "up":
                 report["upvotes"] += 1
             else:
                 report["downvotes"] += 1
 
-            # ✅ Prevent negative votes
+            # Prevent negatives
             report["upvotes"] = max(0, report["upvotes"])
             report["downvotes"] = max(0, report["downvotes"])
-
             report["voters"][vote.user_id] = vote.vote_type
 
+            # ✅ If 3+ upvotes, check what to do
             if report["upvotes"] >= 3:
-                report["status_in_system"] = "alert_triggered"
-                broadcast_alert_whatsapp(report)
+                if report["status"] == "RESOLVED":
+                    # ⛑ RESOLUTION TRIGGERED
+                    if report["status_in_system"] != "resolved":
+                        report["status_in_system"] = "resolved"
+                        notify_resolution_whatsapp(report, test_mode=True, radius_km=DEFAULT_RADIUS_KM)
+
+                        # Resolve nearby matching reports
+                        lat1, lon1 = parse_location(report["location"])
+                        for other in reports:
+                            if (
+                                other["disaster_type"].lower() == report["disaster_type"].lower()
+                                and other["report_id"] != report["report_id"]
+                            ):
+                                lat2, lon2 = parse_location(other["location"])
+                                if None not in (lat1, lon1, lat2, lon2):
+                                    distance = haversine(lat1, lon1, lat2, lon2)
+                                    if distance <= DEFAULT_RADIUS_KM and other["status_in_system"] != "resolved":
+                                        other["status_in_system"] = "resolved"
+                else:
+                    # 🚨 ALERT TRIGGERED
+                    if report["status_in_system"] != "alert_triggered":
+                        report["status_in_system"] = "alert_triggered"
+                        broadcast_alert_whatsapp(report, test_mode=True, radius_km=DEFAULT_RADIUS_KM)
 
             save_reports(reports)
             return {
@@ -161,6 +182,7 @@ def vote(vote: VoteInput):
             }
 
     raise HTTPException(status_code=404, detail="Report not found")
+
 @app.get("/reports")
 def get_reports():
     return load_reports()
