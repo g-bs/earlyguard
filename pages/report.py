@@ -7,6 +7,10 @@ from pathlib import Path
 import uuid
 from streamlit_js_eval import streamlit_js_eval
 import streamlit.components.v1 as components
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from blockchain import SimpleBlockchain
 
 # Load authorized API keys

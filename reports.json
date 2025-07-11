@@ -1,0 +1,36 @@
+[
+  {
+    "user_id": "test_user_1",
+    "report_text": "Major fire spotted in Market Road",
+    "disaster_type": "Fire",
+    "severity": "High",
+    "explanation": "Thick smoke visible from far",
+    "status": "ACTIVE",
+    "timestamp": "2025-07-10T14:00:00Z",
+    "location": "Lat: 10.025, Lon: 76.355",
+    "report_id": "b2320fa4-e974-46f7-a619-e74f3fea43f5",
+    "upvotes": 0,
+    "downvotes": 0,
+    "voters": {},
+    "status_in_system": "pending"
+  },
+  {
+    "user_id": "user1",
+    "report_text": "Massive fire at XYZ",
+    "disaster_type": "Fire",
+    "severity": "High",
+    "explanation": "Saw flames and smoke rising",
+    "status": "ACTIVE",
+    "timestamp": "2025-07-10T15:00:00Z",
+    "location": "Lat: 10.025, Lon: 76.355",
+    "report_id": "4253979f-1756-4c4a-ab50-8be7b2197a9c",
+    "upvotes": 3,
+    "downvotes": 0,
+    "voters": {
+      "user2": "up",
+      "user3": "up",
+      "user4": "up"
+    },
+    "status_in_system": "alert_triggered"
+  }
+]
