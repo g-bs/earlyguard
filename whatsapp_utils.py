@@ -46,6 +46,12 @@ def broadcast_alert_whatsapp(report, test_mode=False):
         print("❌ subscribers.json file not found.")
         return []
 
+    # Extract report location
+    report_lat, report_lon = parse_location(report["location"])
+    if None in (report_lat, report_lon):
+        print("❌ Invalid report location.")
+        return []
+
     # Format timestamp
     try:
         dt = datetime.fromisoformat(report["timestamp"].replace("Z", "+00:00"))
@@ -76,7 +82,6 @@ def broadcast_alert_whatsapp(report, test_mode=False):
     # ✅ Include LLM-generated guidelines
     message += f"\n📢 Safety Guidelines:\n{guidelines}"
 
-    # Send to all subscribers
     results = []
     for user in subscribers:
         name = user.get("name", "User")
@@ -262,7 +267,6 @@ def notify_resolution_whatsapp(report, test_mode=False, radius_km=5):
 
         if not phone.startswith("+"):
             phone = "+" + phone
-
         full_whatsapp_number = f"whatsapp:{phone}"
         personalized_msg = f"Hi {name},\n{message}"
         result = send_whatsapp(full_whatsapp_number, personalized_msg, test_mode=test_mode)
