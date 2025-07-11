@@ -1,53 +1,53 @@
+# home.py
 import streamlit as st
 from datetime import datetime
-
-# ----------------------
-# Mock live alerts data
-# ----------------------
-alerts = [
-    {
-        "type": "Flood Warning",
-        "severity": "Severe",
-        "location": "Alappuzha",
-        "time": datetime.now().strftime("%I:%M %p"),
-        "color": "red"
-    },
-    {
-        "type": "Heavy Rain Alert",
-        "severity": "Moderate",
-        "location": "Wayanad",
-        "time": datetime.now().strftime("%I:%M %p"),
-        "color": "orange"
-    },
-    {
-        "type": "Landslide Risk",
-        "severity": "Mild",
-        "location": "Idukki",
-        "time": datetime.now().strftime("%I:%M %p"),
-        "color": "green"
-    }
-]
+import json
+from pathlib import Path
 
 # ----------------------
 # Page Setup
 # ----------------------
 st.set_page_config(page_title="Early Guard++", layout="wide")
 
-# ----------------------
-# Header
-# ----------------------
 st.title("🛡️ Early Guard++")
 st.subheader("Community-Driven Disaster Early Warning System")
-
 st.markdown("---")
+
+# ----------------------
+# Load Blockchain Data
+# ----------------------
+alerts = []
+blockchain_path = Path("data/blockchain.json")
+
+if blockchain_path.exists():
+    with open(blockchain_path, "r") as f:
+        chain = json.load(f)
+
+        for block in reversed(chain):  # Newest first
+            data = block.get("data", {})
+            severity = data.get("severity", "Unknown")
+            alerts.append({
+                "type": data.get("disaster_type", "Unknown"),
+                "severity": severity,
+                "status": data.get("status", "Unknown"),
+                "location": data.get("location", "Unknown"),
+                "time": data.get("timestamp", "Unknown"),
+                "color": {
+                    "High": "red",
+                    "Medium": "orange",
+                    "Low": "green"
+                }.get(severity, "gray")
+            })
+else:
+    st.warning("⚠ No alerts found. Submit an incident to see live updates.")
 
 # ----------------------
 # Live Alerts Section
 # ----------------------
 st.header("🚨 Live Alerts")
 
-for alert in alerts:
-    with st.container():
+if alerts:
+    for alert in alerts:
         st.markdown(
             f"""
             <div style='
@@ -58,11 +58,18 @@ for alert in alerts:
                 margin-bottom:10px;
             '>
                 <strong>{alert['type']}</strong><br>
-                <small>{alert['severity']} | {alert['location']} | {alert['time']}</small>
+                <small>
+                🔥 <strong>Severity:</strong> {alert['severity']} | 
+                📌 <strong>Status:</strong> {alert['status']} | 
+                📍 {alert['location']} | 
+                🕒 {alert['time']}
+                </small>
             </div>
             """,
             unsafe_allow_html=True
         )
+else:
+    st.info("No active disaster alerts yet.")
 
 # ----------------------
 # Quick Actions
@@ -73,19 +80,13 @@ st.subheader("🧭 Quick Actions")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    if st.button("📤 Report Incident"):
-        st.info("Navigate to the Report Incident page (TODO: Add routing logic or sidebar link).")
-
-
-
+    st.page_link("pages/report.py", label="📤 Report Incident", icon="📝")
 
 with col2:
-    if st.button("📋 Community Feed"):
-        st.info("Community activity feed under development.")
+    st.info("📋 Community Feed (Coming soon...)")
 
 # ----------------------
 # Footer
 # ----------------------
 st.markdown("---")
 st.caption("Made with ❤️ for Infosys Global Hackathon 2025")
-
