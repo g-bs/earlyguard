@@ -9,7 +9,11 @@ from pathlib import Path
 # ----------------------
 st.set_page_config(page_title="Early Guard++", layout="wide")
 
+<<<<<<< HEAD
 st.title("🛡 Early Guard++")
+=======
+st.title("🛡️ Early Guard++")
+>>>>>>> 099791d9828762437cecde5a9ab595cc8790c8b6
 st.subheader("Community-Driven Disaster Early Warning System")
 st.markdown("---")
 
@@ -39,6 +43,7 @@ if blockchain_path.exists():
                 }.get(severity, "gray")
             })
 else:
+<<<<<<< HEAD
     # Show sample alerts when blockchain.json doesn't exist
     st.info("📋 No blockchain data found. Showing sample alerts for demonstration.")
     alerts = [
@@ -75,6 +80,9 @@ else:
             "color": "red"
         }
     ]
+=======
+    st.warning("⚠ No alerts found. Submit an incident to see live updates.")
+>>>>>>> 099791d9828762437cecde5a9ab595cc8790c8b6
 
 # ----------------------
 # Live Alerts Section
@@ -82,6 +90,7 @@ else:
 st.header("🚨 Live Alerts")
 
 if alerts:
+<<<<<<< HEAD
     for i, alert in enumerate(alerts):
         # Create columns for alert content and button
         col1, col2 = st.columns([4, 1])
@@ -125,6 +134,31 @@ if alerts:
                 st.switch_page("pages/Map.py")
 else:
     st.info("No active disaster alerts at the moment.")
+=======
+    for alert in alerts:
+        st.markdown(
+            f"""
+            <div style='
+                background-color:{'lightcoral' if alert['color']=='red' else 'gold' if alert['color']=='orange' else "#11d22b"};
+                padding:15px; 
+                border-left: 5px solid {alert['color']}; 
+                border-radius:8px;
+                margin-bottom:10px;
+            '>
+                <strong>{alert['type']}</strong><br>
+                <small>
+                🔥 <strong>Severity:</strong> {alert['severity']} | 
+                📌 <strong>Status:</strong> {alert['status']} | 
+                📍 {alert['location']} | 
+                🕒 {alert['time']}
+                </small>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+else:
+    st.info("No active disaster alerts yet.")
+>>>>>>> 099791d9828762437cecde5a9ab595cc8790c8b6
 
 # ----------------------
 # Quick Actions
@@ -144,4 +178,8 @@ with col2:
 # Footer
 # ----------------------
 st.markdown("---")
+<<<<<<< HEAD
 st.caption("Made with ❤ for Infosys Global Hackathon 2025")
+=======
+st.caption("Made with ❤️ for Infosys Global Hackathon 2025")
+>>>>>>> 099791d9828762437cecde5a9ab595cc8790c8b6

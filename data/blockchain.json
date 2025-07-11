@@ -29,6 +29,7 @@
     },
     {
         "index": 3,
+<<<<<<< HEAD
         "timestamp": "2025-07-11 11:00:47.984935",
         "data": {
             "user_id": "5b13909a-a0e8-4c05-8ba6-98b697ddd35d",
@@ -71,10 +72,59 @@
         "data": {
             "user_id": "8bf2162a-3b1f-4564-a7a3-3548d01898d7",
             "username": "gowri",
+=======
+        "timestamp": "2025-07-11 11:02:27.800108",
+        "data": {
+            "user_id": "b20d3dfc-7aab-4704-b74a-d82367fda858",
+            "username": "gautham",
+            "submitted_by": "Public User",
+            "verified": false,
+            "api_key_used": null,
+            "disaster_type": "Unknown",
+            "location": "18.59584, 73.67557",
+            "description": "jhgtsrjk",
+            "timestamp": "2025-07-11 16:32:27",
+            "photo_base64": null,
+            "severity": "Low",
+            "status": "IGNORED",
+            "explanation": "The report \"jhgtsrjk\" appears to be a nonsensical string of characters, likely a typo or a mistake. It does not contain any meaningful information that would indicate a disaster or an emergency situation. Therefore, it can be classified as a low-severity report and ignored."
+        },
+        "previous_hash": "47bac90a9856a39cd0a6f098c33afb79d50271940dde4cd6801e115784053e78",
+        "hash": "0d0234b99d7f7a6d900ac059f8a3b8cde65007bbe009a26320b4556e8ce2fe58"
+    },
+    {
+        "index": 4,
+        "timestamp": "2025-07-11 11:06:08.583737",
+        "data": {
+            "user_id": "ef14ecc7-e1d0-4e04-975c-6e73bcf5a00e",
+            "username": "Mehal",
+            "submitted_by": "Public User",
+            "verified": false,
+            "api_key_used": null,
+            "disaster_type": "Structural Collapse",
+            "location": "8.53271, 76.88491",
+            "description": "heavy rain.house collapse",
+            "timestamp": "2025-07-11 16:36:07",
+            "photo_base64": null,
+            "severity": "Medium",
+            "status": "ACTIVE",
+            "explanation": "The report mentions a house collapse, which is a significant event that can cause harm to people and damage to property. While the severity is not extremely high (e.g., a massive flood or a widespread wildfire), it is still a serious incident that requires immediate attention and response.\n\nNote: The severity could be higher if there were reports of injuries or fatalities, but based on the provided information, I classified it as Medium."
+        },
+        "previous_hash": "0d0234b99d7f7a6d900ac059f8a3b8cde65007bbe009a26320b4556e8ce2fe58",
+        "hash": "2fc3a9cd03d4b40ea12265fda469f0f6e9183d7364cb6fa4dafb65df887bf765"
+    },
+    {
+        "index": 5,
+        "timestamp": "2025-07-11 11:37:05.116326",
+        "data": {
+            "user_id": "dd374f43-911a-4584-8762-b650b193659d",
+            "username": "Theresa",
+>>>>>>> 099791d9828762437cecde5a9ab595cc8790c8b6
             "submitted_by": "Public User",
             "verified": false,
             "api_key_used": null,
             "disaster_type": "Flood",
+<<<<<<< HEAD
             "location": "",
             "description": "heavy rain with flood and building under water",
             "timestamp": "2025-07-11 22:49:37",
@@ -90,10 +140,51 @@
         "data": {
             "user_id": "b0cbd029-69f2-42a2-99e3-b73e508b0c83",
             "username": "dev",
+=======
+            "location": "8.53268, 76.88491",
+            "description": "Extensive inundation of land including roads and structure rsulting in significant damage to properties and infrastructure",
+            "timestamp": "2025-07-11 17:07:04",
+            "photo_base64": null,
+            "severity": "High",
+            "status": "ACTIVE",
+            "explanation": "The report mentions \"extensive inundation\" and \"significant damage\" to properties and infrastructure, indicating a widespread and severe impact. This suggests a high level of severity, as it implies a large number of people and structures have been affected, and the damage is likely to be extensive and costly to repair."
+        },
+        "previous_hash": "2fc3a9cd03d4b40ea12265fda469f0f6e9183d7364cb6fa4dafb65df887bf765",
+        "hash": "41f0c40e4d2bb74d0d086fd34929289b6ff7f5ffc7d5f5ac8882ce9fac35cf23"
+    },
+    {
+        "index": 6,
+        "timestamp": "2025-07-11 16:38:32.406589",
+        "data": {
+            "user_id": "93d1fb0a-0551-4e45-bb22-69393f021fc2",
+            "username": "Kerala NGO",
+            "submitted_by": "Public User",
+            "verified": false,
+            "api_key_used": null,
+            "disaster_type": "Unknown",
+            "location": "9.93123, 76.26730",
+            "description": "hjjjnn",
+            "timestamp": "2025-07-11 22:08:29",
+            "photo_base64": null,
+            "severity": "Low",
+            "status": "IGNORED",
+            "explanation": "The report \"hjjjnn\" appears to be a nonsensical string of characters, likely an error or a typo. It does not contain any meaningful information that would indicate a disaster or an issue that requires attention."
+        },
+        "previous_hash": "41f0c40e4d2bb74d0d086fd34929289b6ff7f5ffc7d5f5ac8882ce9fac35cf23",
+        "hash": "c03d6c72291f4f927c22ec0a917ec6785029f5145bee1f02f7d74fa0b5e46992"
+    },
+    {
+        "index": 7,
+        "timestamp": "2025-07-11 16:41:44.754948",
+        "data": {
+            "user_id": "93d1fb0a-0551-4e45-bb22-69393f021fc2",
+            "username": "Field Volunteer",
+>>>>>>> 099791d9828762437cecde5a9ab595cc8790c8b6
             "submitted_by": "Public User",
             "verified": false,
             "api_key_used": null,
             "disaster_type": "Fire",
+<<<<<<< HEAD
             "location": "",
             "description": "Fire that burned the whole house, intense fire ",
             "timestamp": "2025-07-11 22:53:28",
@@ -102,5 +193,38 @@
         },
         "previous_hash": "1dc0f7f5bc7481d5a2fa385ebbfa6b87ba51c69afb6773cd8d08ae8315a193a2",
         "hash": "cf3127cac265ece711a6c47ff06f9c6e24dd9f2d7f76e55a5b78aa009a8c894f"
+=======
+            "location": "9.93123, 76.26730",
+            "description": "Buildings are subjected to heavy fire",
+            "timestamp": "2025-07-11 22:11:44",
+            "photo_base64": null,
+            "severity": "Medium",
+            "status": "ACTIVE",
+            "explanation": "The report mentions \"heavy fire\" affecting buildings, which indicates a significant threat to the structures and potentially the people inside. While it's not a catastrophic event like a complete building collapse, it's still a serious situation that requires immediate attention and action to prevent further damage or harm.\n\nNote: If the report had mentioned \"small fire\" or \"minor fire damage\", I would classify it as Low severity."
+        },
+        "previous_hash": "c03d6c72291f4f927c22ec0a917ec6785029f5145bee1f02f7d74fa0b5e46992",
+        "hash": "e6cec946ba06a42f828cd0b058dce6fa6780e52e4bc341f9e5595d4ec630d021"
+    },
+    {
+        "index": 8,
+        "timestamp": "2025-07-11 16:50:39.643047",
+        "data": {
+            "user_id": "ddc7c1b1-3812-4271-853f-0cf05602f769",
+            "username": "Kerala NGO",
+            "submitted_by": "Kerala NGO",
+            "verified": true,
+            "api_key_used": "NGO123",
+            "disaster_type": "Weather",
+            "location": "9.93123, 76.26730",
+            "description": "Severe Rainfall",
+            "timestamp": "2025-07-11 22:20:36",
+            "photo_base64": null,
+            "severity": "Medium",
+            "status": "ACTIVE",
+            "explanation": "Severe rainfall can cause significant disruptions and damage, such as flooding, landslides, and power outages. While it may not be as severe as a hurricane or earthquake, it can still have a significant impact on daily life and infrastructure.\n\nNote: The severity level is based on the potential impact of the disaster, which in this case is moderate."
+        },
+        "previous_hash": "e6cec946ba06a42f828cd0b058dce6fa6780e52e4bc341f9e5595d4ec630d021",
+        "hash": "cdebc83d236280edac29dac2f50663f7814b7fb44c239db5ddad8526df888a91"
+>>>>>>> 099791d9828762437cecde5a9ab595cc8790c8b6
     }
 ]
