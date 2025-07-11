@@ -58,7 +58,7 @@ else:
         }
 
         # Save to file
-        file_path = Path("data/alert_network.json")
+        file_path = Path("data/subscribers.json")
         file_path.parent.mkdir(parents=True, exist_ok=True)
 
         if file_path.exists():
