@@ -89,5 +89,68 @@
         },
         "previous_hash": "2fc3a9cd03d4b40ea12265fda469f0f6e9183d7364cb6fa4dafb65df887bf765",
         "hash": "41f0c40e4d2bb74d0d086fd34929289b6ff7f5ffc7d5f5ac8882ce9fac35cf23"
+    },
+    {
+        "index": 6,
+        "timestamp": "2025-07-11 16:38:32.406589",
+        "data": {
+            "user_id": "93d1fb0a-0551-4e45-bb22-69393f021fc2",
+            "username": "Kerala NGO",
+            "submitted_by": "Public User",
+            "verified": false,
+            "api_key_used": null,
+            "disaster_type": "Unknown",
+            "location": "9.93123, 76.26730",
+            "description": "hjjjnn",
+            "timestamp": "2025-07-11 22:08:29",
+            "photo_base64": null,
+            "severity": "Low",
+            "status": "IGNORED",
+            "explanation": "The report \"hjjjnn\" appears to be a nonsensical string of characters, likely an error or a typo. It does not contain any meaningful information that would indicate a disaster or an issue that requires attention."
+        },
+        "previous_hash": "41f0c40e4d2bb74d0d086fd34929289b6ff7f5ffc7d5f5ac8882ce9fac35cf23",
+        "hash": "c03d6c72291f4f927c22ec0a917ec6785029f5145bee1f02f7d74fa0b5e46992"
+    },
+    {
+        "index": 7,
+        "timestamp": "2025-07-11 16:41:44.754948",
+        "data": {
+            "user_id": "93d1fb0a-0551-4e45-bb22-69393f021fc2",
+            "username": "Field Volunteer",
+            "submitted_by": "Public User",
+            "verified": false,
+            "api_key_used": null,
+            "disaster_type": "Fire",
+            "location": "9.93123, 76.26730",
+            "description": "Buildings are subjected to heavy fire",
+            "timestamp": "2025-07-11 22:11:44",
+            "photo_base64": null,
+            "severity": "Medium",
+            "status": "ACTIVE",
+            "explanation": "The report mentions \"heavy fire\" affecting buildings, which indicates a significant threat to the structures and potentially the people inside. While it's not a catastrophic event like a complete building collapse, it's still a serious situation that requires immediate attention and action to prevent further damage or harm.\n\nNote: If the report had mentioned \"small fire\" or \"minor fire damage\", I would classify it as Low severity."
+        },
+        "previous_hash": "c03d6c72291f4f927c22ec0a917ec6785029f5145bee1f02f7d74fa0b5e46992",
+        "hash": "e6cec946ba06a42f828cd0b058dce6fa6780e52e4bc341f9e5595d4ec630d021"
+    },
+    {
+        "index": 8,
+        "timestamp": "2025-07-11 16:50:39.643047",
+        "data": {
+            "user_id": "ddc7c1b1-3812-4271-853f-0cf05602f769",
+            "username": "Kerala NGO",
+            "submitted_by": "Kerala NGO",
+            "verified": true,
+            "api_key_used": "NGO123",
+            "disaster_type": "Weather",
+            "location": "9.93123, 76.26730",
+            "description": "Severe Rainfall",
+            "timestamp": "2025-07-11 22:20:36",
+            "photo_base64": null,
+            "severity": "Medium",
+            "status": "ACTIVE",
+            "explanation": "Severe rainfall can cause significant disruptions and damage, such as flooding, landslides, and power outages. While it may not be as severe as a hurricane or earthquake, it can still have a significant impact on daily life and infrastructure.\n\nNote: The severity level is based on the potential impact of the disaster, which in this case is moderate."
+        },
+        "previous_hash": "e6cec946ba06a42f828cd0b058dce6fa6780e52e4bc341f9e5595d4ec630d021",
+        "hash": "cdebc83d236280edac29dac2f50663f7814b7fb44c239db5ddad8526df888a91"
     }
 ]

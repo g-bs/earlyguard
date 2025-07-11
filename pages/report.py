@@ -1,20 +1,13 @@
-# report.py
-
 import streamlit as st
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 from blockchain import SimpleBlockchain
-
 from datetime import datetime
-import base64
 import json
-from pathlib import Path
 import uuid
 from streamlit_js_eval import streamlit_js_eval
 import streamlit.components.v1 as components
-
 
 # Load authorized API keys
 def load_authorized_users():
@@ -69,7 +62,6 @@ with st.form("incident_form"):
     disaster_type_input = st.selectbox("🌪 Type of Disaster", ["Flood", "Fire", "Landslide", "Other"])
     location = st.text_input("📍 Location", value=location_default)
     description = st.text_area("📝 Description")
-    photo = st.file_uploader("📷 Upload Photo", type=["jpg", "jpeg", "png"])
 
     # Voice Recorder (only playback)
     st.markdown("🎙️ **Instant Voice Recorder (Browser playback only)**")
@@ -124,16 +116,14 @@ with st.form("incident_form"):
 
 # ----------- On Submit -----------
 if submit:
+    api_key = api_key.strip()
     verified = api_key in AUTHORIZED_USERS
     submitted_by = AUTHORIZED_USERS.get(api_key, "Public User")
-
-    photo_data = base64.b64encode(photo.read()).decode() if photo else None
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # ✅ Call the LLM to classify severity, status, disaster type
+    # ✅ Call the LLM to classify severity, status, disaster type
     from classify import classify_severity
     disaster_type_llm, severity, status, explanation = classify_severity(description)
-
 
     report_data = {
         "user_id": st.session_state.user_id,
@@ -145,12 +135,11 @@ if submit:
         "location": location,
         "description": description,
         "timestamp": timestamp,
-        "photo_base64": photo_data,
+        "photo_base64": None,  # Removed photo support
         "severity": severity,
         "status": status,
         "explanation": explanation
     }
-
 
     last_block = blockchain.get_last_block()
     new_block = blockchain.create_block(report_data, last_block["hash"])
